@@ -14,8 +14,9 @@ This repository demonstrates:
   - Validation for mandatory fields (e.g., missing title)
 - Use of fixtures for authenticated sessions
 - Use of `.env` for managing test credential
+- Use of data file for data-driven testing
 
-The project structure is 
+```txt
 playwright-library-catalogue-tests/
 ├─ src/
 │  ├─ pages/
@@ -43,3 +44,4 @@ playwright-library-catalogue-tests/
 ├─ package.json
 ├─ playwright.config.ts
 └─ README.md
+```
