@@ -30,7 +30,7 @@ pipeline {
                         node --version
                         npm --version
                         npm ci
-                        npx playwright test
+                        npx playwright test --project=chromium --workers=1
                       '
                 '''
             }
