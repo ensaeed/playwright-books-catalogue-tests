@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'mcr.microsoft.com/playwright:v1.55.0-noble'
-            args '--ipc=host --user=root'
+            args '--ipc=host --user=root --entrypoint=""'
         }
     }
 
@@ -22,6 +22,7 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
+                sh 'echo hello'
                 sh 'whoami'
                 sh 'pwd'
                 sh 'ls -la'
