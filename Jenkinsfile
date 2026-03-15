@@ -1,13 +1,19 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:20-bookworm'
+            args '--user=root'
+        }
+    }
 
     stages {
-        stage('Test shell') {
+        stage('Test Docker shell') {
             steps {
-                sh 'echo hello from jenkins host'
+                sh 'echo hello from docker'
                 sh 'whoami'
                 sh 'pwd'
-                sh 'ls -la'
+                sh 'node --version'
+                sh 'npm --version'
             }
         }
     }
