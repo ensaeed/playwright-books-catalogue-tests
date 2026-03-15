@@ -7,6 +7,8 @@ pipeline  {
     }
     environment {
             CI= 'true'
+            HOME = "${WORKSPACE}"
+            NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
     }
     stages {
         stage('Checkout'){
@@ -20,13 +22,11 @@ pipeline  {
             steps{
                 sh 'node --version'
                 sh 'npm --version'
+                sh 'mkdir -p "$NPM_CONFIG_CACHE"'
                 sh 'npm ci'
             }
         }
-        stage('Install Playwright browsers'){
-            steps {
-                sh 'npx playwright install --with-deps'
-            }
+       
         }
         stage('Run Playwright tests'){
             steps{
