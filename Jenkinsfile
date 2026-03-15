@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'mcr.microsoft.com/playwright:v1.55.0-noble'
-            args '--ipc=host'
+            args '--ipc=host --user=root'
         }
     }
 
@@ -22,6 +22,9 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
+                sh 'whoami'
+                sh 'pwd'
+                sh 'ls -la'
                 sh 'node --version'
                 sh 'npm --version'
                 sh 'mkdir -p "$NPM_CONFIG_CACHE"'
