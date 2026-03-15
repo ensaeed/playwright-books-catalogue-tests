@@ -17,7 +17,7 @@ pipeline  {
                 checkout scm
 
             }
-
+        }
         }
         stage('Install dependencies'){
             steps{
