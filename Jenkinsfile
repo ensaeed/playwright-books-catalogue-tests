@@ -1,15 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/playwright:v1.55.0-noble'
-            args '--user=root --ipc=host --entrypoint=""'
-        }
-    }
+    agent any
 
     environment {
         CI = 'true'
-        HOME = "${WORKSPACE}"
-        NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
     }
 
     stages {
@@ -20,21 +13,26 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Run Playwright in Docker') {
             steps {
-                sh 'echo hello from playwright container'
-                sh 'whoami'
-                sh 'pwd'
-                sh 'node --version'
-                sh 'npm --version'
-                sh 'mkdir -p "$NPM_CONFIG_CACHE"'
-                sh 'npm ci'
-            }
-        }
-
-        stage('Run Playwright tests') {
-            steps {
-                sh 'npx playwright test'
+                sh '''
+                    docker run --rm \
+                      --user root \
+                      --ipc=host \
+                      -e CI=true \
+                      -v "$WORKSPACE:/work" \
+                      -w /work \
+                      mcr.microsoft.com/playwright:v1.55.0-noble \
+                      bash -lc '
+                        export HOME=/work
+                        export NPM_CONFIG_CACHE=/work/.npm
+                        mkdir -p "$NPM_CONFIG_CACHE"
+                        node --version
+                        npm --version
+                        npm ci
+                        npx playwright test
+                      '
+                '''
             }
         }
     }
