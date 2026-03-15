@@ -1,20 +1,48 @@
 pipeline {
     agent {
         docker {
-            image 'node:20-bookworm'
-            args '--user=root'
+            image 'mcr.microsoft.com/playwright:v1.55.0-noble'
+            args '--user=root --ipc=host --entrypoint=""'
         }
     }
 
+    environment {
+        CI = 'true'
+        HOME = "${WORKSPACE}"
+        NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
+    }
+
     stages {
-        stage('Test Docker shell') {
+        stage('Checkout') {
             steps {
-                sh 'echo hello from docker'
+                deleteDir()
+                checkout scm
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                sh 'echo hello from playwright container'
                 sh 'whoami'
                 sh 'pwd'
                 sh 'node --version'
                 sh 'npm --version'
+                sh 'mkdir -p "$NPM_CONFIG_CACHE"'
+                sh 'npm ci'
             }
+        }
+
+        stage('Run Playwright tests') {
+            steps {
+                sh 'npx playwright test'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
         }
     }
 }
