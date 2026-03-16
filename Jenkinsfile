@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         CI = 'true'
+        HOST_NPM_CACHE = '/var/lib/jenkins/npm-cache'
+        PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.55.0-noble'
     }
 
     stages {
@@ -13,20 +15,33 @@ pipeline {
             }
         }
 
-        stage('Run Playwright in Docker') {
+        stage('Prepare cache') {
             steps {
                 sh '''
+                    mkdir -p "$HOST_NPM_CACHE"
+                '''
+            }
+        }
+
+        stage('Run Playwright in Docker') {
+            options {
+                timeout(time: 15, unit: 'MINUTES')
+            }
+            steps {
+                sh '''
+                    docker pull "$PLAYWRIGHT_IMAGE"
+
                     docker run --rm \
                       --user root \
                       --ipc=host \
                       -e CI=true \
+                      -e HOME=/tmp \
+                      -e NPM_CONFIG_CACHE=/npm-cache \
                       -v "$WORKSPACE:/work" \
+                      -v "$HOST_NPM_CACHE:/npm-cache" \
                       -w /work \
-                      mcr.microsoft.com/playwright:v1.55.0-noble \
+                      "$PLAYWRIGHT_IMAGE" \
                       bash -lc '
-                        export HOME=/work
-                        export NPM_CONFIG_CACHE=/work/.npm
-                        mkdir -p "$NPM_CONFIG_CACHE"
                         node --version
                         npm --version
                         npm ci
