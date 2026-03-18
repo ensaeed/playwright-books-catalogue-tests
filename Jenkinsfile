@@ -24,25 +24,26 @@ pipeline {
         }
 
         stage('Run Playwright in Docker') {
-    steps {
-        sh '''
-        docker run --rm \
-        --user $(id -u):$(id -g) \
-        --ipc=host \
-        -e CI=true \
-        -v $WORKSPACE:/work \
-        -w /work \
-        mcr.microsoft.com/playwright:v1.55.0-noble \
-        bash -lc "
-            export HOME=/work
-            export NPM_CONFIG_CACHE=/work/.npm
-            mkdir -p \\$NPM_CONFIG_CACHE
-            npm ci
-            npx playwright test --project=chromium --workers=1
-        "
-        '''
+            steps {
+                sh '''
+                    docker run --rm \
+                      --user $(id -u):$(id -g) \
+                      --ipc=host \
+                      -e CI=true \
+                      -e HOME=/work \
+                      -e NPM_CONFIG_CACHE=/npm-cache \
+                      -v "$WORKSPACE:/work" \
+                      -v "$HOST_NPM_CACHE:/npm-cache" \
+                      -w /work \
+                      "$PLAYWRIGHT_IMAGE" \
+                      bash -lc "
+                        npm ci
+                        npx playwright test --project=chromium --workers=1
+                      "
+                '''
+            }
+        }
     }
-}
 
     post {
         always {
