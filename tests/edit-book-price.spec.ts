@@ -1,11 +1,16 @@
 // The user can edit the price of the book
 
 
-import {test,expect} from '../src/fixtures/Login.fixture';
-import { LoginPage } from '../src/pages/LoginPage';
+import { test, expect } from '@playwright/test';
+import { loginAndWaitForBooksPage } from '../src/helpers/auth.helper';
+
 import { validBooks } from '../src/data/bookData';
 import { BooksPage } from '../src/pages/BooksPage';
 import { title } from 'process';
+
+test.beforeEach(async ({ page }) => {
+  await loginAndWaitForBooksPage(page);
+});
 
 test('User can edit a book', async({page})=>{
 

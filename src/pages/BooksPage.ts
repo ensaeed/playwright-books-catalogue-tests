@@ -37,6 +37,7 @@ export class BooksPage {
 
     }
     async openAddBookForm(){
+        await this.addBookNavButton.waitFor({ state: 'visible', timeout: 30000 });
         await this.addBookNavButton.click();
     }
 
@@ -49,8 +50,8 @@ export class BooksPage {
         await this.isbnInput.fill(book.isbn);
         await this.publicationDateInput.fill(book.publicationDate);
         await this.priceInput.fill(book.price);
-
         await this.addBooksSubmitButton.click();
+        await this.page.getByRole('row', { name: new RegExp(book.title, 'i') }).waitFor({ state: 'visible', timeout: 20000 });
 
 
     }
@@ -64,7 +65,11 @@ export class BooksPage {
     }
 
     async deleteBook(title:string){
+
+         const row = this.getBookRow(title);
+        await row.waitFor({ state: 'visible', timeout: 20000 });
         await this.getDeleteButtonForBook(title).click();
+        await this.getBookRow(title).waitFor({ state: 'detached', timeout: 20000 });
 
     }
 

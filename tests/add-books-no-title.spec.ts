@@ -1,9 +1,14 @@
 // Test case: verifies that an user cannot a add a book without title
 
-import {test,expect} from '../src/fixtures/Login.fixture';
+import { test, expect } from '@playwright/test';
+import { loginAndWaitForBooksPage } from '../src/helpers/auth.helper';
 import { BooksPage } from '../src/pages/BooksPage';
 import {invalidBooks} from '../src/data/inValidbooks';
 
+test.beforeEach(async ({ page }) => {
+      await loginAndWaitForBooksPage(page);
+
+   });
 
 test ('User cannot add a book without title', async({page})=>{
 

@@ -1,15 +1,23 @@
 // Test case: verifies that an user can delete a book successfully
 
-import {test,expect} from '../src/fixtures/Login.fixture';
+import { test, expect } from '@playwright/test';
+import { loginAndWaitForBooksPage } from '../src/helpers/auth.helper';
+import { LoginPage } from '../src/pages/LoginPage';
 import { BooksPage } from '../src/pages/BooksPage';
 import { validBooks } from '../src/data/bookData';
 
+test.beforeEach(async ({ page }) => {
+  await loginAndWaitForBooksPage(page);
+});
 
 test('User can delete a book', async({page})=>{
 
     const booksPage=new BooksPage(page);
-
-    await booksPage.addBookNavButton;
+   // console.log('=== Current URL after login ===', page.url());
+ //   console.log('=== Page title after login ===', await page.title());
+  
+   // await page.getByRole('button', { name: /add book/i }).first().waitFor({ state: 'visible', timeout: 30000 });
+    
 
     const base=validBooks[0];
 

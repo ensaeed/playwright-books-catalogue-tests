@@ -20,16 +20,22 @@ this.loginButton=page.getByRole('button',{name:/login/i});
     
 }
 async goto() {
-  await  this.page.goto(booksAppConfig.baseURL)
+  await this.page.goto(booksAppConfig.baseURL, {
+    waitUntil: 'domcontentloaded',
+    timeout: 60000
+  });
 }
 
 async loginAsadmin() {
  const username= process.env.BOOKS_ADMIN_USERNAME!;
  const password=process.env.BOOKS_ADMIN_PASSWORD!;
+ await this.page.waitForLoadState('domcontentloaded');
+ await this.usernameInput.waitFor({ state: 'visible', timeout: 30000 });
  await this.usernameInput.fill(username);
  await this.passwordInput.fill(password);
 
 await this.loginButton.click();
+
 }
 async loginAsInValidUser (username:string,password:string){
   await this.usernameInput.fill(username);
