@@ -10,6 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                sh 'chown -R $(id -u):$(id -g) $WORKSPACE || true'
                 deleteDir()
                 checkout scm
             }
@@ -36,10 +37,7 @@ pipeline {
                       -v "$HOST_NPM_CACHE:/npm-cache" \
                       -w /work \
                       "$PLAYWRIGHT_IMAGE" \
-                      bash -lc "
-                        npm ci
-                        npx playwright test --project=chromium --workers=1
-                      "
+                      bash -lc "npm ci && npx playwright test --project=chromium --workers=1 --reporter=line"
                 '''
             }
         }
