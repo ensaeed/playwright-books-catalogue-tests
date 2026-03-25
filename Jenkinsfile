@@ -4,7 +4,7 @@ pipeline {
     environment {
         CI = 'true'
         HOST_NPM_CACHE = '/var/lib/jenkins/npm-cache'
-        PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.55.0-noble'
+        PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.56.1-noble'
     }
 
     stages {
