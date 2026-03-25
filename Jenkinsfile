@@ -25,6 +25,9 @@ pipeline {
         }
 
         stage('Run Playwright in Docker') {
+            options {
+                timeout(time: 20, unit: 'MINUTES')
+            }
             steps {
                 sh '''
                     docker run --rm \
@@ -37,7 +40,7 @@ pipeline {
                       -v "$HOST_NPM_CACHE:/npm-cache" \
                       -w /work \
                       "$PLAYWRIGHT_IMAGE" \
-                      bash -lc "npm ci && npx playwright test --project=chromium --workers=1 --reporter=line"
+                      /bin/sh -lc 'curl -I https://frontendui-librarysystem.onrender.com/login || true; sleep 10; npm ci && npx playwright test --project=chromium --workers=1 --reporter=line'
                 '''
             }
         }
