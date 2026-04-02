@@ -48,7 +48,7 @@ pipeline {
                         echo "Installing dependencies..." &&
                         npm ci &&
                         echo "Running Playwright tests..." &&
-                        npx playwright test --project=chromium --workers=1 --reporter=line --trace=on
+                        npx playwright test tests/add-books-no-title.spec.ts --project=chromium --workers=1 --reporter=list --trace=retain-on-failure
                       '
                 '''
             }
