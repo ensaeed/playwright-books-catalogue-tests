@@ -1,47 +1,57 @@
-// Page Object Model for the Login Page - handling login actions and form interactions
-
-import {Page} from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { booksAppConfig } from '../config/appConfig';
 
 export class LoginPage {
-    readonly page:Page;
+  readonly page: Page;
 
-//Locators
-readonly usernameInput;
-readonly passwordInput;
-readonly loginButton;
+  // Locators
+  readonly usernameInput;
+  readonly passwordInput;
+  readonly loginButton;
 
-constructor(page:Page) {
-    this.page=page;
+  constructor(page: Page) {
+    this.page = page;
 
-this.usernameInput=page.getByRole('textbox',{name:/username/i});
-this.passwordInput=page.getByRole('textbox',{name:/password/i});
-this.loginButton=page.getByRole('button',{name:/login/i});
-    
+    this.usernameInput = page.getByRole('textbox', { name: /username/i });
+    this.passwordInput = page.locator('#password');
+    this.loginButton = page.getByRole('button', { name: /login/i });
+  }
+
+  async goto() {
+    console.log('Opening login page');
+
+    await this.page.goto(booksAppConfig.baseURL, {
+      waitUntil: 'domcontentloaded',
+      timeout: 60_000,
+    });
+
+    await expect(this.usernameInput).toBeVisible({ timeout: 30_000 });
+    await expect(this.passwordInput).toBeVisible({ timeout: 30_000 });
+    await expect(this.loginButton).toBeVisible({ timeout: 30_000 });
+
+    console.log('Login page loaded');
+  }
+
+  async loginAsadmin() {
+    const username = process.env.BOOKS_ADMIN_USERNAME!;
+    const password = process.env.BOOKS_ADMIN_PASSWORD!;
+
+    console.log('Filling admin username');
+    await this.usernameInput.fill(username);
+
+    console.log('Filling admin password');
+    await this.passwordInput.fill(password);
+
+    console.log('Clicking login');
+    await this.loginButton.click();
+  }
+
+  async loginAsInValidUser(username: string, password: string) {
+    await expect(this.usernameInput).toBeVisible({ timeout: 30_000 });
+    await expect(this.passwordInput).toBeVisible({ timeout: 30_000 });
+
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
 }
-async goto() {
-  await this.page.goto(booksAppConfig.baseURL, {
-    waitUntil: 'domcontentloaded',
-    timeout: 60000
-  });
-}
-
-async loginAsadmin() {
- const username= process.env.BOOKS_ADMIN_USERNAME!;
- const password=process.env.BOOKS_ADMIN_PASSWORD!;
- await this.page.waitForLoadState('domcontentloaded');
- await this.usernameInput.waitFor({ state: 'visible', timeout: 30000 });
- await this.usernameInput.fill(username);
- await this.passwordInput.fill(password);
-
-await this.loginButton.click();
-
-}
-async loginAsInValidUser (username:string,password:string){
-  await this.usernameInput.fill(username);
-  await this.passwordInput.fill(password);
-  await this.loginButton.click();
-
-}}
-
-
