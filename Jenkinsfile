@@ -36,9 +36,10 @@ pipeline {
                 
             }
             steps {
-                  sh 'npm ci --no-audit --no-fund'
+                 
                 sh '''
                     docker run --rm \
+                      --user root\
                       --ipc=host \
                       -e CI=true \
                       -e DEBUG=pw:api \
@@ -63,7 +64,8 @@ pipeline {
                           sleep 10
                           count=$((count+1))
                         done
-
+                        echo "Installing dependencies..."
+                        npm ci --no-audit --no-fund
                         
                         
                         
