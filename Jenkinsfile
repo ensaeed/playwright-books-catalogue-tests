@@ -3,20 +3,29 @@ pipeline {
 
     environment {
         CI = 'true'
-        PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.56.1-noble'
+        PLAYWRIGHT_IMAGE = '://microsoft.com'
 
-        // Better stored as Jenkins credentials later
-        BOOKS_APP_URL = 'https://frontendui-librarysystem.onrender.com/login'
+        // Credentials & URLs
+        'https://frontendui-librarysystem.onrender.com'
         BOOKS_ADMIN_USERNAME = 'admin'
         BOOKS_ADMIN_PASSWORD = 'admin'
     }
 
     stages {
+        stage('Initial Cleanup') {
+            steps {
+                echo "Cleaning up AWS disk space..."
+                // Removes stopped containers and dangling images to prevent AWS from 'choking'
+                sh 'docker system prune -f'
+                deleteDir()
+            }
+        }
+
         stage('Checkout') {
             steps {
-                sh 'chown -R $(id -u):$(id -g) $WORKSPACE || true'
-                deleteDir()
                 checkout scm
+                // Ensure the workspace is owned by the Jenkins user for Docker mounting
+                sh 'chown -R $(id -u):$(id -g) .'
             }
         }
 
@@ -39,16 +48,24 @@ pipeline {
                       -w /work \
                       "$PLAYWRIGHT_IMAGE" \
                       /bin/sh -lc '
-                        echo "Checking environment..." &&
-                        echo "BOOKS_APP_URL=$BOOKS_APP_URL" &&
-                        test -n "$BOOKS_ADMIN_USERNAME" && echo "BOOKS_ADMIN_USERNAME_PRESENT=yes" || (echo "BOOKS_ADMIN_USERNAME missing" && exit 1) &&
-                        test -n "$BOOKS_ADMIN_PASSWORD" && echo "BOOKS_ADMIN_PASSWORD_PRESENT=yes" || (echo "BOOKS_ADMIN_PASSWORD missing" && exit 1) &&
-                        echo "Checking app availability..." &&
-                        curl -I "$BOOKS_APP_URL" || true &&
-                        echo "Installing dependencies..." &&
-                        npm ci &&
-                        echo "Running Playwright tests..." &&
-                        npx playwright test tests/add-books-no-title.spec.ts --project=chromium --workers=1 --reporter=list --trace=retain-on-failure
+                        echo "Waking up Render instance (waiting for 200 OK)..."
+                        count=0
+                        while [ $count -lt 30 ]; do
+                          if curl -s -I "$BOOKS_APP_URL" | grep -q "200 OK"; then
+                            echo "Server is UP!"
+                            break
+                          fi
+                          echo "Waiting for server to wake up... ($((count*10))s)"
+                          sleep 10
+                          count=$((count+1))
+                        done
+
+                        echo "Installing dependencies..."
+                        npm ci --prefer-offline
+
+                        echo "Running Playwright tests..."
+                        # Using --reporter=line to see the EXACT error message in Jenkins logs
+                        npx playwright test tests/add-books-no-title.spec.ts --project=chromium --workers=1 --reporter=line --trace=retain-on-failure
                       '
                 '''
             }
@@ -57,8 +74,13 @@ pipeline {
 
     post {
         always {
+            echo "Archiving results..."
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
             archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+            
+            echo "Final disk cleanup..."
+            deleteDir()
+            sh 'docker container prune -f'
         }
     }
 }

@@ -20,12 +20,12 @@ await booksPage.addBookNavButton.click();
 //Get the first record from the invalidbooks object
 const book=invalidBooks[0]
 
-booksPage.titleInput.fill(book.title);
-booksPage.authorInput.fill(book.author);
-booksPage.genreSelect.selectOption({label: book.genre}),
-booksPage.isbnInput.fill(book.isbn),
-booksPage.publicationDateInput.fill(book.publicationDate),
-booksPage.priceInput.fill(book.price);
+await booksPage.titleInput.fill(book.title);
+await booksPage.authorInput.fill(book.author);
+await booksPage.genreSelect.selectOption({label: book.genre});
+await booksPage.isbnInput.fill(book.isbn);
+await booksPage.publicationDateInput.fill(book.publicationDate);
+await booksPage.priceInput.fill(book.price);
 
 await booksPage.addBooksSubmitButton.click();
 
