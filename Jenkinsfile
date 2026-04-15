@@ -33,8 +33,7 @@ pipeline {
         stage('Run Playwright in Docker') {
             options {
                 timeout(time: 30, unit: 'MINUTES')
-                // install dependencies on Jenkins host (fast)
-                sh 'npm ci --no-audit --no-fund'
+                
             }
             steps {
                 sh '''
