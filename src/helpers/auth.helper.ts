@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 
 export async function loginAndWaitForBooksPage(page: Page) {
+  console.log('Entered loginAndWaitForBooksPage');
   const loginPage = new LoginPage(page);
 
   console.log('Navigating to login page');
@@ -13,7 +14,7 @@ export async function loginAndWaitForBooksPage(page: Page) {
   const addBookButton = page.getByRole('button', { name: /add book/i }).first();
 
   console.log('Waiting for Add Book button to be visible');
-  await expect(addBookButton).toBeVisible({ timeout: 45_000 });
+  await expect(addBookButton).toBeVisible({ timeout: 10_000 });
 
   console.log('Books page loaded successfully');
 }

@@ -14,6 +14,7 @@ test.beforeEach(async ({ page }) => {
    });
 
 test ('User cannot add a book without title', async({page})=>{
+console.log('Entered test body');
 
 const booksPage=new BooksPage(page);
 await booksPage.addBookNavButton.click();
