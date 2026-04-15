@@ -12,7 +12,7 @@ export class LoginPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.usernameInput = page.getByRole('textbox', { name: /username/i });
+    this.usernameInput = page.locator('#username');
     this.passwordInput = page.locator('#password');
     this.loginButton = page.getByRole('button', { name: /login/i });
   }
@@ -24,6 +24,8 @@ export class LoginPage {
       waitUntil: 'domcontentloaded',
       timeout: 60_000,
     });
+
+    await this.page.waitForLoadState('networkidle');
 
     await expect(this.usernameInput).toBeVisible({ timeout: 30_000 });
     await expect(this.passwordInput).toBeVisible({ timeout: 30_000 });
