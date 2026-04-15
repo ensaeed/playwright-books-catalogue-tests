@@ -66,7 +66,7 @@ pipeline {
 
                         echo "Installing dependencies..."
                         npm ci --no-audit --no-fund
-                        sh 'npx playwright install --dry-run'
+                        
 
                         echo "Running Playwright tests..."
                         # Using --reporter=line to see the EXACT error message in Jenkins logs
