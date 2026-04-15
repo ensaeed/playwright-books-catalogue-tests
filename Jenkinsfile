@@ -36,6 +36,7 @@ pipeline {
                 
             }
             steps {
+                  sh 'npm ci --no-audit --no-fund'
                 sh '''
                     docker run --rm \
                       --ipc=host \
@@ -63,8 +64,8 @@ pipeline {
                           count=$((count+1))
                         done
 
-                        echo "Installing dependencies..."
-                        npm ci --no-audit --no-fund
+                        
+                        
                         
 
                         echo "Running Playwright tests..."
