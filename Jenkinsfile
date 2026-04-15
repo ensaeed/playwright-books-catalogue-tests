@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         CI = 'true'
-        PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.56.1-noble'
+        PLAYWRIGHT_IMAGE = 'mcr.microsoft.com/playwright:v1.59.1-noble'
 
 
         // Credentials & URLs
