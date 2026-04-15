@@ -6,7 +6,7 @@ pipeline {
         PLAYWRIGHT_IMAGE = '://microsoft.com'
 
         // Credentials & URLs
-        'https://frontendui-librarysystem.onrender.com'
+        BOOKS_APP_URL ='https://frontendui-librarysystem.onrender.com'
         BOOKS_ADMIN_USERNAME = 'admin'
         BOOKS_ADMIN_PASSWORD = 'admin'
     }
