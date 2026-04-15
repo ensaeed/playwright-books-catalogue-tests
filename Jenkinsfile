@@ -64,7 +64,7 @@ pipeline {
                         done
 
                         echo "Installing dependencies..."
-                        npm ci --prefer-offline
+                         npm install --no-package-lock --no-audit --no-fund
 
                         echo "Running Playwright tests..."
                         # Using --reporter=line to see the EXACT error message in Jenkins logs
