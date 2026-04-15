@@ -38,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                     docker run --rm \
-                      --user $(id -u):$(id -g) \
+                      
                       --ipc=host \
                       -e CI=true \
                       -e DEBUG=pw:api \
