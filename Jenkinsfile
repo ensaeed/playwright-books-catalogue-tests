@@ -33,6 +33,8 @@ pipeline {
         stage('Run Playwright in Docker') {
             options {
                 timeout(time: 30, unit: 'MINUTES')
+                // install dependencies on Jenkins host (fast)
+                sh 'npm ci --no-audit --no-fund'
             }
             steps {
                 sh '''
@@ -64,7 +66,8 @@ pipeline {
                         done
 
                         echo "Installing dependencies..."
-                         npm install --no-package-lock --no-audit --no-fund
+                        npm ci --no-audit --no-fund
+                        sh 'npx playwright install --dry-run'
 
                         echo "Running Playwright tests..."
                         # Using --reporter=line to see the EXACT error message in Jenkins logs
