@@ -32,7 +32,7 @@ pipeline {
 
         stage('Run Playwright in Docker') {
             options {
-                timeout(time: 20, unit: 'MINUTES')
+                timeout(time: 30, unit: 'MINUTES')
             }
             steps {
                 sh '''
@@ -40,6 +40,7 @@ pipeline {
                       --user $(id -u):$(id -g) \
                       --ipc=host \
                       -e CI=true \
+                      -e DEBUG=pw:api \
                       -e HOME=/work \
                       -e NPM_CONFIG_CACHE=/work/.npm \
                       -e BOOKS_APP_URL="$BOOKS_APP_URL" \
@@ -52,9 +53,10 @@ pipeline {
                         echo "Waking up Render instance (waiting for 200 OK)..."
                         count=0
                         while [ $count -lt 30 ]; do
-                          if curl -s -I "$BOOKS_APP_URL" | grep -q "200 OK"; then
-                            echo "Server is UP!"
-                            break
+                           code=$(curl -s -o /dev/null -w "%{http_code}" "$BOOKS_APP_URL")
+                            if [ "$code" = "200" ]; then
+                                echo "Server is UP!"
+                                break
                           fi
                           echo "Waiting for server to wake up... ($((count*10))s)"
                           sleep 10

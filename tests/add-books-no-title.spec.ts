@@ -5,7 +5,7 @@ import { loginAndWaitForBooksPage } from '../src/helpers/auth.helper';
 import { BooksPage } from '../src/pages/BooksPage';
 import {invalidBooks} from '../src/data/inValidbooks';
 
-test.setTimeout(60_000);
+test.setTimeout(90_000);
 
 test.beforeEach(async ({ page }) => {
       await loginAndWaitForBooksPage(page);
