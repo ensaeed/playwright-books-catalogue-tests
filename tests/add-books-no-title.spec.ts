@@ -8,6 +8,7 @@ import {invalidBooks} from '../src/data/inValidbooks';
 test.setTimeout(90_000);
 
 test.beforeEach(async ({ page }) => {
+       console.log('beforeEach started');
       await loginAndWaitForBooksPage(page);
 
    });

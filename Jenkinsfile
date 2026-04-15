@@ -68,7 +68,7 @@ pipeline {
 
                         echo "Running Playwright tests..."
                         # Using --reporter=line to see the EXACT error message in Jenkins logs
-                        npx playwright test tests/add-books-no-title.spec.ts --project=chromium --workers=1 --reporter=line --trace=retain-on-failure
+                        npx playwright test tests/add-books-no-title.spec.ts --project=chromium --workers=1 --reporter=list 
                       '
                 '''
             }
