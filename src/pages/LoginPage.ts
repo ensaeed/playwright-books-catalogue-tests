@@ -9,7 +9,6 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-
     this.usernameInput = page.locator('input[type="text"]');
     this.passwordInput = page.locator('input[type="password"]');
     this.loginButton = page.getByRole('button', { name: /log in|login/i });
@@ -17,8 +16,9 @@ export class LoginPage {
 
   async goto() {
     console.log('Opening login page');
+    console.log(`Navigating to: ${booksAppConfig.baseURL}/login`);
 
-    await this.page.goto(booksAppConfig.baseURL, {
+    await this.page.goto(`${booksAppConfig.baseURL}/login`, {
       waitUntil: 'domcontentloaded',
       timeout: 60_000,
     });
@@ -49,6 +49,15 @@ export class LoginPage {
     await this.passwordInput.fill(password);
 
     console.log('Clicking login');
+    await this.loginButton.click();
+  }
+
+  async loginAsInvalidUser(username: string, password: string) {
+    await expect(this.usernameInput).toBeVisible({ timeout: 30_000 });
+    await expect(this.passwordInput).toBeVisible({ timeout: 30_000 });
+
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
     await this.loginButton.click();
   }
 }
