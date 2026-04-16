@@ -9,7 +9,7 @@ export async function loginAndWaitForBooksPage(page: Page) {
   await loginPage.goto();
 
   console.log('Logging in as admin');
-  await loginPage.loginAsadmin();
+  await loginPage.loginAsAdmin();
 
   const addBookButton = page.getByRole('button', { name: /add book/i }).first();
 
